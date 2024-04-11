@@ -19,30 +19,31 @@ void add(char *name, int priority, int burst) {
 
 
 void sort_by_burst() {
-    struct node *current = tasks;
     struct node *sorted = NULL;
+    struct node *current = tasks;
+
     while (current != NULL) {
         struct node *next = current->next;
-        // Вставляем текущую задачу в отсортированный список
-        if (sorted == NULL || sorted->task->burst > current->task->burst) {
-            // Перемещаем текущую задачу в начало отсортированного списка
+
+        if (sorted == NULL || sorted->task->burst <= current->task->burst) {
             current->next = sorted;
             sorted = current;
         } else {
-            // Ищем место для вставки текущей задачи в отсортированный список
             struct node *temp = sorted;
-            while (temp->next != NULL && temp->next->task->burst <= current->task->burst) {
+            while (temp->next != NULL && temp->next->task->burst > current->task->burst) {
                 temp = temp->next;
             }
-            // Вставляем текущую задачу после узла temp
             current->next = temp->next;
             temp->next = current;
         }
+
         current = next;
     }
-    // Обновляем указатель на начало списка задач
     tasks = sorted;
 }
+
+
+
 
 void pick_NextTask(){
     if (tasks == NULL) {
