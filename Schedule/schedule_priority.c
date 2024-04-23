@@ -7,6 +7,10 @@
 
 struct node *tasks = NULL;
 int countTasks = 0;
+float start_time = 0.0;
+float total_turnaround_time = 0.0;
+float total_waiting_time = 0.0;
+float total_response_time = 0.0;
 
 void add(char *name, int priority, int burst) {
     Task *newTask = malloc(sizeof(Task));
@@ -16,7 +20,6 @@ void add(char *name, int priority, int burst) {
     countTasks++;
     insert(&tasks, newTask);
 }
-
 
 void sort_by_priority() {
     struct node *sorted = NULL;
@@ -49,7 +52,11 @@ void pick_NextTask(){
 
     while (tasks) {
         Task *currentTask = tasks->task;
+        total_response_time += start_time;
+        total_waiting_time += start_time;
         run(currentTask, currentTask->burst);
+        start_time += currentTask->burst ;
+        total_turnaround_time += start_time;
         delete(&tasks, currentTask);
     }
 }
@@ -57,4 +64,10 @@ void pick_NextTask(){
 void schedule() {
     sort_by_priority();
     pick_NextTask();
+    float avg_turnaround_time = total_turnaround_time / countTasks;
+    float avg_waiting_time = total_waiting_time / countTasks;
+    float avg_response_time = total_response_time / countTasks;
+    printf("Average Turnaround Time: %.2f\n", avg_turnaround_time);
+    printf("Average Waiting Time: %.2f\n", avg_waiting_time);
+    printf("Average Response Time: %.2f\n", avg_response_time);
 }
